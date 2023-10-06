@@ -1,5 +1,3 @@
-const { response } = require("express");
-
 /**
  * Класс User управляет авторизацией, выходом и
  * регистрацией пользователя из приложения
@@ -30,7 +28,7 @@ class User {
   static current() {
     if (localStorage) {
       try {
-        JSON.parse(localStorage.getItem("user"));
+        return JSON.parse(localStorage.getItem("user"));
       } catch {
         return null;
       }

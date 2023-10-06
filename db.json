@@ -5,6 +5,27 @@
       "email": "demo@demo",
       "password": "demo",
       "id": "1"
+    },
+    {
+      "id": "21m6tu1eohln30s6q6"
+    },
+    {
+      "id": "21m6tu1eweln30x0x4"
+    },
+    {
+      "id": "21m6tu1fs0ln32mktc"
+    },
+    {
+      "name": "Test",
+      "email": "12@test.ru",
+      "password": "1100",
+      "id": "21m6tu1fxtln32o9xo"
+    },
+    {
+      "name": "Test2",
+      "email": "2@test.ru",
+      "password": "110011",
+      "id": "21m6tu1gciln3313rs"
     }
   ],
   "accounts": [
@@ -22,6 +43,21 @@
       "name": "Бизнес",
       "user_id": "1",
       "id": "3"
+    },
+    {
+      "name": "Test",
+      "user_id": "21m6tu1fxtln32o9xo",
+      "id": "21m6tufp2lnbrsjkb"
+    },
+    {
+      "name": "Сбербанк",
+      "user_id": "21m6tu1fxtln32o9xo",
+      "id": "21m6tufv6lnbs6bnz"
+    },
+    {
+      "name": "111",
+      "user_id": "21m6tu1fxtln32o9xo",
+      "id": "21m6tun8mlnd97n3m"
     }
   ],
   "transactions": [
@@ -159,6 +195,24 @@
       "sum": 300000,
       "type": "expense",
       "user_id": "1"
+    },
+    {
+      "id": "21m6tuh1blnbt2ds1",
+      "type": "income",
+      "name": "x",
+      "sum": 250,
+      "account_id": "21m6tufv6lnbs6bnz",
+      "user_id": "21m6tu1fxtln32o9xo",
+      "created_at": "2023-10-04T13:49:47.712Z"
+    },
+    {
+      "id": "21m6tun9glnd99tcd",
+      "type": "expense",
+      "name": "56A",
+      "sum": 100,
+      "account_id": "21m6tufv6lnbs6bnz",
+      "user_id": "21m6tu1fxtln32o9xo",
+      "created_at": "2023-10-05T14:11:14.508Z"
     }
   ]
 }

@@ -42,7 +42,7 @@ class AsyncForm {
   getData() {
     const formData = new FormData(this.element);
     const data = {};
-    formData.forEach((key, value) => {
+    formData.forEach((value, key) => {
       data[key] = value;
     });
     return data;

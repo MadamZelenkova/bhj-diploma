@@ -11,6 +11,7 @@ class LoginForm extends AsyncForm {
    * */
   onSubmit(data) {
     User.login(data, (err, response) => {
+      //console.log(data)
       if (response.success === true) {
         this.element.reset();
         const loginWindow = App.getModal("login");

@@ -8,7 +8,8 @@ class CreateTransactionForm extends AsyncForm {
    * метод renderAccountsList
    * */
   constructor(element) {
-    super(element)
+    super(element);
+    this.renderAccountsList();
   }
 
   /**
@@ -16,7 +17,27 @@ class CreateTransactionForm extends AsyncForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-
+    const accountsSelect = document.getElementById("expense-accounts-list");
+    const accountsSelectIncome = document.getElementById(
+      "income-accounts-list"
+    );
+    Account.list({}, (err, response) => {
+      if (response.success) {
+        accountsSelect.innerHTML = "";
+        accountsSelectIncome.innerHTML = "";
+        response.data.forEach((account) => {
+          const option = document.createElement("option");
+          option.value = account.id;
+          option.textContent = account.name;
+          const optionIncome = option.cloneNode(true);
+          
+          accountsSelect.appendChild(option);
+          accountsSelectIncome.appendChild(optionIncome);
+        });
+      } else {
+        console.log(err);
+      }
+    });
   }
 
   /**
@@ -26,6 +47,29 @@ class CreateTransactionForm extends AsyncForm {
    * в котором находится форма
    * */
   onSubmit(data) {
+    Transaction.create(data, (err, response) => {
+      if (response.success) {
+        this.element.reset();
 
+        if (
+          document.querySelector("#modal-newIncome").style.display === "block"
+        ) {
+          const incomeModal = App.getModal("newIncome");
+          if (incomeModal) {
+            incomeModal.close();
+          }
+        } else if (
+          document.querySelector("#modal-newExpense").style.display === "block" //?  в TransactionsWidget в консоль выведен элемент модального окна
+        ) {
+          const expenseModal = App.getModal("newExpense");
+          if (expenseModal) {
+            expenseModal.close();
+          }
+        }
+        App.update();
+      } else {
+        console.log(err);
+      }
+    });
   }
 }
