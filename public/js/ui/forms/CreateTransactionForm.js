@@ -21,7 +21,8 @@ class CreateTransactionForm extends AsyncForm {
     const accountsSelectIncome = document.getElementById(
       "income-accounts-list"
     );
-    Account.list({}, (err, response) => {
+
+    Account.list(User.current(), (err, response) => {
       if (response.success) {
         accountsSelect.innerHTML = "";
         accountsSelectIncome.innerHTML = "";
@@ -30,7 +31,7 @@ class CreateTransactionForm extends AsyncForm {
           option.value = account.id;
           option.textContent = account.name;
           const optionIncome = option.cloneNode(true);
-          
+
           accountsSelect.appendChild(option);
           accountsSelectIncome.appendChild(optionIncome);
         });
@@ -50,16 +51,15 @@ class CreateTransactionForm extends AsyncForm {
     Transaction.create(data, (err, response) => {
       if (response.success) {
         this.element.reset();
-
         if (
-          document.querySelector("#modal-newIncome").style.display === "block"
+          document.getElementById("modal-new-income").style.display === "block"
         ) {
           const incomeModal = App.getModal("newIncome");
           if (incomeModal) {
             incomeModal.close();
           }
         } else if (
-          document.querySelector("#modal-newExpense").style.display === "block" //?  в TransactionsWidget в консоль выведен элемент модального окна
+          document.getElementById("modal-new-expense").style.display === "block"
         ) {
           const expenseModal = App.getModal("newExpense");
           if (expenseModal) {

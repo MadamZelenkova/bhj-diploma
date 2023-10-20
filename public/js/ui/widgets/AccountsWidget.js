@@ -31,22 +31,28 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
-    const accountBtn = document.querySelector(".create-account");
-    const accounts = document.querySelectorAll(".account");
-    console.log(document.querySelectorAll(".account")); //////////////////////null???????
+    const accountsPanel = document.querySelector(".accounts-panel");
+
+    accountsPanel.addEventListener("click", (event) => {
+      let target = event.target;
+      console.log("Элемент, на котором происходит событие", target); //////!!!!!!!!!!!!!!!!!!!!
+      ///////Почему то именно тут событие происходит только на <a> или <span> внутри элемента с классом "account", а не на самом элементе
+      //////хотя элемент, который отвечает за выход имеет идентичный код, но там работает обработчик как положено - на самом элементе
+      while (target && target !== accountsPanel) {
+        if (target.classList.contains("account")) {
+          event.preventDefault();
+          this.onSelectAccount(target);
+          return;
+        }
+        target = target.parentElement;
+      }
+    });
+
+    const accountBtn = this.element.querySelector(".create-account");
 
     accountBtn.addEventListener("click", () => {
       const accountWindow = App.getModal("createAccount");
       accountWindow.open();
-    });
-
-    accounts.forEach((e) => {
-      e.onclick = (event) => {
-        event.preventDefault();
-        this.onSelectAccount(e.setAttribute.id);
-        console.log(this);
-        console.log(e.setAttribute.id);
-      };
     });
   }
 
@@ -62,15 +68,10 @@ class AccountsWidget {
    * */
   update() {
     if (User.current()) {
-      const data = User.current();
-      Account.list(data, (err, response) => {
+      Account.list(User.current(), (err, response) => {
         if (response.success === true) {
-          //console.log(response)
           this.clear();
-          response.data.forEach((el) => {
-            ///////Для каждого элемента в полученном массиве счетов вызывает метод renderItem()
-            this.renderItem(el);
-          });
+          this.renderItem(response.data);
         } else {
           console.log(err);
         }
@@ -98,14 +99,14 @@ class AccountsWidget {
    * Вызывает App.showPage( 'transactions', { account_id: id_счёта });
    * */
   onSelectAccount(element) {
-    const accounts = document.querySelectorAll(".account");
+    const accounts = this.element.querySelectorAll(".account");
     accounts.forEach((e) => {
       e.classList.remove("active");
     });
-    const currency = document.querySelector(`.element[data-id="${element}"]`);
-    console.log(element);
-    currency.classList.add("active");
-    App.showPage("transactions", { account_id: element });
+    element.classList.add("active");
+    App.showPage("transactions", {
+      account_id: element.getAttribute("data-id"),
+    });
   }
 
   /**
@@ -115,7 +116,6 @@ class AccountsWidget {
    * */
   getAccountHTML(item) {
     const account = document.createElement("li");
-    //console.log(item)
     account.className = "account";
     account.setAttribute("data-id", item.id);
 
@@ -143,8 +143,8 @@ class AccountsWidget {
    * */
   renderItem(data) {
     const accountConteiner = document.querySelector(".accounts-panel");
-    // data.forEach((item) => {               /////////////   * Получает массив с информацией о счетах.
-    accountConteiner.appendChild(this.getAccountHTML(data));
-    //});
+    data.forEach((item) => {
+      accountConteiner.appendChild(this.getAccountHTML(item));
+    });
   }
 }

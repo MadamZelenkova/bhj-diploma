@@ -45,5 +45,6 @@ class Entity {
       method: "DELETE",
       callback: callback,
     });
+      //console.log("Запрос на удаление аккаунта:", data)
   }
 }

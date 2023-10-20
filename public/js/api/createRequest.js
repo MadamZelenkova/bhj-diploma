@@ -32,6 +32,8 @@ const createRequest = (options = {}) => {
         }
       }
 
+      //console.log(options.method, options.url);
+      //console.log(formData);
       xhr.open(options.method, options.url);
       xhr.responseType = "json";
       xhr.send(formData);

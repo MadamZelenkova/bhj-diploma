@@ -33,20 +33,27 @@ class TransactionsPage {
    * TransactionsPage.removeAccount соответственно
    * */
   registerEvents() {
-    const accRemoveBtn = document.querySelector(".remove-account");
-    const transactionRemoveBtn = document.querySelector(".transaction__remove");
+    const accRemoveBtn = this.element.querySelector(".remove-account");
+    //const transactionRemoveBtn = document.querySelectorAll( ".transaction__remove" );
 
     accRemoveBtn.addEventListener("click", (e) => {
       e.preventDefault();
       this.removeAccount();
     });
 
-    if (transactionRemoveBtn) {
-      transactionRemoveBtn.addEventListener("click", (e) => {
+    const content = document.querySelector(".content");
+
+    content.addEventListener("click", (e) => {
+      if (e.target.classList.contains("transaction__remove")) {
         e.preventDefault();
-        this.removeTransaction();
-      });
-    }
+        const id = e.target.getAttribute("data-id");
+        this.removeTransaction(id);
+      } else if(e.target.classList.contains("fa-trash")) { //////на этом элементе срабатывает "click" как на нужном, так и на дочернем
+        e.preventDefault();
+        const id = e.target.parentNode.getAttribute("data-id");
+        this.removeTransaction(id);
+      }
+    });
   }
 
   /**
@@ -66,12 +73,12 @@ class TransactionsPage {
     const confirmed = confirm("Вы уверены, что хотите удалить этот счет?");
 
     if (confirmed) {
-      const accountId = this.lastOptions.account_id;
-      Account.remove({ id: accountId }, (err, response) => {
-        //////??????data
-        if (response.success) {
-          TransactionsPage.clear();
+     ////// console.log("последние опции, переданные в удаление счета",this.lastOptions);
 
+      Account.remove(this.lastOptions, (err, response) => {
+        //console.log("ответ от сервера на удаление счета", response); //////////ОТВЕТ ОТ СЕРВЕРА - false
+        if (response.success) {
+          this.clear();
           App.updateWidgets();
           App.updateForms();
         } else {
@@ -91,9 +98,8 @@ class TransactionsPage {
     const confirmed = confirm(
       "Вы действительно хотите удалить эту транзакцию?"
     );
-
     if (confirmed) {
-      Transaction.remove(id, (err, response) => {
+      Transaction.remove({ id: id }, (err, response) => {
         if (response.success) {
           App.update();
         } else {
@@ -116,18 +122,20 @@ class TransactionsPage {
     this.lastOptions = options;
     Account.get(options.account_id, (err, response) => {
       if (response.success) {
-        this.renderTitle(response.data.name);
-        Transaction.list(
-          { account_id: options.account_id },
-          (err, response) => {
-            /////Transaction.list({ account_id: options.account_id }, ...)???
-            if (response.success) {
-              this.renderTransactions(response.data);
-            } else {
-              console.log(err);
-            }
+        response.data.forEach((el) => {
+          if (el.id === this.lastOptions.account_id) {
+            this.renderTitle(el.name);
           }
-        );
+        });
+        const content = this.element.querySelector(".content");
+        content.innerHTML = "";
+        Transaction.list(options, (err, response) => {
+          if (response.success) {
+            this.renderTransactions(response.data);
+          } else {
+            console.log(err);
+          }
+        });
       } else {
         console.log(err);
       }
@@ -140,6 +148,8 @@ class TransactionsPage {
    * Устанавливает заголовок: «Название счёта»
    * */
   clear() {
+    const content = this.element.querySelector(".content");
+    content.innerHTML = "";
     this.renderTransactions([]);
     this.renderTitle("Название счета");
     this.lastOptions = null;
@@ -166,8 +176,7 @@ class TransactionsPage {
       minute: "numeric",
     };
     const formattedDate = new Date(date).toLocaleString("ru-RU", options);
-    const [datePart, timePart] = formattedDate.split(" г., ");
-    return `${datePart} в ${timePart}`;
+    return `${formattedDate}`;
   }
 
   /**
@@ -175,7 +184,7 @@ class TransactionsPage {
    * item - объект с информацией о транзакции
    * */
   getTransactionHTML(item) {
-    const time = formatDate(item.created_at);
+    const time = this.formatDate(item.created_at);
 
     const transactions = document.createElement("div");
     transactions.className = `transaction transaction_${item.type.toLowerCase()} row`;
@@ -196,7 +205,7 @@ class TransactionsPage {
     transactionTitle.textContent = item.name;
     const transactionDate = document.createElement("div");
     transactionDate.className = "transaction__date";
-    transactionDate.textContent = formatDate(time);
+    transactionDate.textContent = time;
 
     infoDiv.appendChild(transactionTitle);
     infoDiv.appendChild(transactionDate);
@@ -239,7 +248,7 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data) {
-    const content = document.querySelector(".content");
+    const content = this.element.querySelector(".content");
     data.forEach((item) => {
       content.appendChild(this.getTransactionHTML(item));
     });
