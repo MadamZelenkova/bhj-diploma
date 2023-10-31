@@ -26,11 +26,10 @@ class Modal {
    * (с помощью метода Modal.onClose)
    * */
   registerEvents() {
-    const elements = this.element.querySelectorAll('[data-dismiss="modal"]');
-    elements.forEach((e) => {
-      e.addEventListener("click", (event) => {
-        this.onClose(event);
-      });
+    this.element.addEventListener("click", (e) => {
+      if (e.target.getAttribute("data-dismiss") === "modal") {
+        this.onClose(e);
+      }
     });
   }
 

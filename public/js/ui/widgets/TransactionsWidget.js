@@ -26,20 +26,16 @@ class TransactionsWidget {
    * экземпляра окна
    * */
   registerEvents() {
-    const incomeBtn = document.querySelector(".create-income-button");
-    const expenseBtn = document.querySelector(".create-expense-button");
-
-    incomeBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      const incomeWindow = App.getModal("newIncome");
-      incomeWindow.open();
-    });
-
-    expenseBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      //console.log(App.getModal("newExpense"))  ////////////для CreateTransactionForm
-      const expenseWindow = App.getModal("newExpense");
-      expenseWindow.open();
+    this.element.addEventListener("click", (e) => {
+      if (e.target.classList.contains("create-income-button")) {
+        e.preventDefault();
+        const incomeWindow = App.getModal("newIncome");
+        incomeWindow.open();
+      } else if (e.target.classList.contains("create-expense-button")) {
+        e.preventDefault();
+        const expenseWindow = App.getModal("newExpense");
+        expenseWindow.open();
+      }
     });
   }
 }

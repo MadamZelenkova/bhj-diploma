@@ -39,7 +39,6 @@ class Sidebar {
     registerBtn.addEventListener("click", (event) => {
       event.preventDefault();
       const registerWindow = App.getModal("register");
-      console.log(registerWindow)
       registerWindow.open();
     });
 

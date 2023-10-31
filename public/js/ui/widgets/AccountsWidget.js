@@ -31,14 +31,11 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
-    const accountsPanel = document.querySelector(".accounts-panel");
-
-    accountsPanel.addEventListener("click", (event) => {
+    this.element.addEventListener("click", (event) => {
       let target = event.target;
-      console.log("Элемент, на котором происходит событие", target); //////!!!!!!!!!!!!!!!!!!!!
-      ///////Почему то именно тут событие происходит только на <a> или <span> внутри элемента с классом "account", а не на самом элементе
-      //////хотя элемент, который отвечает за выход имеет идентичный код, но там работает обработчик как положено - на самом элементе
-      while (target && target !== accountsPanel) {
+
+      while (target && target !== this.element) {
+        ///код не работает без условия while, клик на элемент с классом "account" не происходит
         if (target.classList.contains("account")) {
           event.preventDefault();
           this.onSelectAccount(target);
@@ -85,7 +82,7 @@ class AccountsWidget {
    * в боковой колонке
    * */
   clear() {
-    const accounts = document.querySelectorAll(".account");
+    const accounts = this.element.querySelectorAll(".account");
     accounts.forEach((e) => {
       e.remove();
     });
@@ -142,7 +139,7 @@ class AccountsWidget {
    * и добавляет его внутрь элемента виджета
    * */
   renderItem(data) {
-    const accountConteiner = document.querySelector(".accounts-panel");
+    const accountConteiner = this.element;
     data.forEach((item) => {
       accountConteiner.appendChild(this.getAccountHTML(item));
     });

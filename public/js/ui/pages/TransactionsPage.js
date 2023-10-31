@@ -34,21 +34,18 @@ class TransactionsPage {
    * */
   registerEvents() {
     const accRemoveBtn = this.element.querySelector(".remove-account");
-    //const transactionRemoveBtn = document.querySelectorAll( ".transaction__remove" );
 
     accRemoveBtn.addEventListener("click", (e) => {
       e.preventDefault();
       this.removeAccount();
     });
 
-    const content = document.querySelector(".content");
-
-    content.addEventListener("click", (e) => {
+    this.element.addEventListener("click", (e) => {
       if (e.target.classList.contains("transaction__remove")) {
         e.preventDefault();
         const id = e.target.getAttribute("data-id");
         this.removeTransaction(id);
-      } else if(e.target.classList.contains("fa-trash")) { //////на этом элементе срабатывает "click" как на нужном, так и на дочернем
+      } else if (e.target.classList.contains("fa-trash")) {
         e.preventDefault();
         const id = e.target.parentNode.getAttribute("data-id");
         this.removeTransaction(id);
@@ -73,10 +70,7 @@ class TransactionsPage {
     const confirmed = confirm("Вы уверены, что хотите удалить этот счет?");
 
     if (confirmed) {
-     ////// console.log("последние опции, переданные в удаление счета",this.lastOptions);
-
-      Account.remove(this.lastOptions, (err, response) => {
-        //console.log("ответ от сервера на удаление счета", response); //////////ОТВЕТ ОТ СЕРВЕРА - false
+      Account.remove({ id: this.lastOptions.account_id }, (err, response) => {
         if (response.success) {
           this.clear();
           App.updateWidgets();
@@ -159,7 +153,7 @@ class TransactionsPage {
    * Устанавливает заголовок в элемент .content-title
    * */
   renderTitle(name) {
-    const contentTitle = document.querySelector(".content-title");
+    const contentTitle = this.element.querySelector(".content-title");
     contentTitle.textContent = name;
   }
 
